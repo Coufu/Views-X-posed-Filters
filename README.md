@@ -11,8 +11,8 @@ Let's say you have two exposed filters: First Name and Last Name. If they search
 - Enable the module
 
 ### Usage
-- Add to your existing Views header/footer (which should have some exposed filters)
-- Go back to your view and use some exposed filters.
+- Add "X-posed Filters" to your existing Views' header/footer (which should have some exposed filters)
+- Go back to your view and experiment by using some exposed filters.
 - Revel in awe of the simple yet awesome functionality
 
 ## Additional Dev Notes
@@ -32,5 +32,5 @@ Contrib
 - Drupal\geolocation\Plugin\views\filter\ProximityFilter
 
 ### Other Notes
-- There is no CSS applied. The label is customizable in the Views UI, and the list of links is just contained as an HTML unordered list.
+- There is no CSS applied. The label is customizable in the Views UI, and the list of links is just contained as an HTML unordered list. It will require you to style it on your own.
 - This plugin *should* be accessibility-friendly. If there are any problems/suggestions to improve this, please contact me.
