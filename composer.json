@@ -1,0 +1,14 @@
+{
+  "name": "drupal/views_x_posed_filters",
+  "type": "drupal-module",
+  "description": "Provides a views area to provide a list of exposed filters being used in order to cancel them out",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/views_x_posed_filters",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/views_x_posed_filters",
+    "source": "http://cgit.drupalcode.org/views_x_posed_filters"
+  },
+  "require": { }
+}

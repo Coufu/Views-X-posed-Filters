@@ -1,0 +1,5 @@
+name: Views X-posed Filters
+type: module
+description: Provides a views area to provide a list of exposed filters being used in order to cancel them out
+core: 8.x
+package: Custom

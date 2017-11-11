@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * Contains views_x_posed_filters.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function views_x_posed_filters_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the views_x_posed_filters module.
+    case 'help.page.views_x_posed_filters':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides a views area to provide a list of exposed filters being used in order to cancel them out') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+
