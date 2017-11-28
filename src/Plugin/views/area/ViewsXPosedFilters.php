@@ -45,6 +45,11 @@ class ViewsXPosedFilters extends AreaPluginBase {
         'value' => ['default' => ''],
       ],
     ];
+    $options['filters'] = [
+      'contains' => [
+        'value' => ['default' => ''],
+      ],
+    ];
     return $options;
   }
 
@@ -74,6 +79,13 @@ class ViewsXPosedFilters extends AreaPluginBase {
       '#default_value' => $this->options['label_classes'],
       '#description' => $this->t('Class(es) to add to label HTML element. "visually-hidden" is a popular one for accessibility if you do not want the label to show.'),
     ];
+
+    $form['filters'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Exposed filters'),
+      '#default_value' => $this->options['filters'],
+      '#description' => $this->t('Filters to activate on (use query string label), separated by spaces. Leave blank to activate on all exposed filters.'),
+    ];
   }
 
   /**
@@ -86,6 +98,7 @@ class ViewsXPosedFilters extends AreaPluginBase {
       $filters = [];
       $label_element = $this->options['label_element'];
       $label_classes = $this->options['label_classes'] ? ' class="' . $this->options['label_classes'] . '"' : '';
+      $exposed_filters = array_filter(explode(' ', $this->options['filters']));
       $markup = '<div class="xposed-filters-wrapper">';
       $markup .= '<' . $label_element . $label_classes . '>' . $this->t($this->options['label']) . '</' . $label_element . '>';
       $markup .= '<ul class="xposed-filters">';
@@ -99,6 +112,11 @@ class ViewsXPosedFilters extends AreaPluginBase {
 
         // Ignore any query string that is not related to exposed filters.
         if (empty($this->exposedTypes[$exposed_name])) {
+          continue;
+        }
+
+        // Ignore any exposed filters that are not listed by the user.
+        if (!empty($exposed_filters) && array_search($exposed_name, $exposed_filters) === FALSE) {
           continue;
         }
 
