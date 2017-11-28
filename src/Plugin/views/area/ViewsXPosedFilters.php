@@ -105,6 +105,7 @@ class ViewsXPosedFilters extends AreaPluginBase {
 
       // Get the value(s) of the filters.
       $build_count = 0;
+      $exposed_count = 0;
       foreach ($this->exposedInput as $exposed_name => $exposed_value) {
         // Ignore any query string operators that have no input value.
         if (empty($this->exposedInput[$exposed_name])) {
@@ -115,6 +116,9 @@ class ViewsXPosedFilters extends AreaPluginBase {
         if (empty($this->exposedTypes[$exposed_name])) {
           continue;
         }
+
+        // Keep track of how many exposed filters there are.
+        $exposed_count++;
 
         // Ignore any exposed filters that are not listed by the user.
         if (!empty($exposed_filters) && array_search($exposed_name, $exposed_filters) === FALSE) {
@@ -210,7 +214,7 @@ class ViewsXPosedFilters extends AreaPluginBase {
       }
 
       // Return plain URL if there is only 1 filter.
-      if (count($filters) == 1) {
+      if ($exposed_count == 1 && count($filters) == 1) {
         $markup .= '<li><a href="' . strtok($_SERVER['REQUEST_URI'], '?') . '" class="filter-cancel"><span class="filter-name">' . $filters[0]['text'] . '</span><span class="visually-hidden">' . $this->t('Clear filter') . '</span></a>';
       }
       else {
