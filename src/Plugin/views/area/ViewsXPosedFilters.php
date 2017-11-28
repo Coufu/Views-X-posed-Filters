@@ -104,6 +104,7 @@ class ViewsXPosedFilters extends AreaPluginBase {
       $markup .= '<ul class="xposed-filters">';
 
       // Get the value(s) of the filters.
+      $build_count = 0;
       foreach ($this->exposedInput as $exposed_name => $exposed_value) {
         // Ignore any query string operators that have no input value.
         if (empty($this->exposedInput[$exposed_name])) {
@@ -204,6 +205,8 @@ class ViewsXPosedFilters extends AreaPluginBase {
           'url' => $link_url,
           'text' => $link_text,
         ];
+
+        $build_count++;
       }
 
       // Return plain URL if there is only 1 filter.
@@ -221,9 +224,11 @@ class ViewsXPosedFilters extends AreaPluginBase {
       $markup .= '</div>';
 
       // Return markup.
-      return [
-        '#markup' => $markup,
-      ];
+      if ($build_count > 0) {
+        return [
+          '#markup' => $markup,
+        ];
+      }
     }
 
     return [];
