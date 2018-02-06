@@ -95,13 +95,8 @@ class ViewsXPosedFilters extends AreaPluginBase {
     $this->buildExposedData();
 
     if (!empty($this->exposedInput)) {
-      $filters = [];
-      $label_element = $this->options['label_element'];
-      $label_classes = $this->options['label_classes'] ? ' class="' . $this->options['label_classes'] . '"' : '';
+      $items = [];
       $exposed_filters = array_filter(explode(' ', $this->options['filters']));
-      $markup = '<div class="xposed-filters-wrapper">';
-      $markup .= '<' . $label_element . $label_classes . '>' . $this->t($this->options['label']) . '</' . $label_element . '>';
-      $markup .= '<ul class="xposed-filters">';
 
       // Get the value(s) of the filters.
       $build_count = 0;
@@ -184,7 +179,7 @@ class ViewsXPosedFilters extends AreaPluginBase {
         }
 
         // Rebuild URI starting with the bare path (without query string).
-        $link_url = strtok($_SERVER['REQUEST_URI'], '?');
+        $link_url = '/' . $this->view->getPath();
 
         // Parse the query string.
         parse_str($_SERVER['QUERY_STRING'], $qarray);
@@ -204,8 +199,8 @@ class ViewsXPosedFilters extends AreaPluginBase {
           $link_url .= http_build_query($qarray);
         }
 
-        // Finally, add to filters array.
-        $filters[] = [
+        // Finally, add to items array.
+        $items[] = [
           'url' => $link_url,
           'text' => $link_text,
         ];
@@ -214,23 +209,18 @@ class ViewsXPosedFilters extends AreaPluginBase {
       }
 
       // Return plain URL if there is only 1 filter.
-      if ($exposed_count == 1 && count($filters) == 1) {
-        $markup .= '<li><a href="' . strtok($_SERVER['REQUEST_URI'], '?') . '" class="filter-cancel"><span class="filter-name">' . $filters[0]['text'] . '</span><span class="visually-hidden">' . $this->t('Clear filter') . '</span></a>';
-      }
-      else {
-        foreach ($filters as $filter) {
-          $markup .= '<li class="filter-wrapper"><a href="' . $filter['url'] . '"><span class="filter-name">' . $filter['text'] . '</span><span class="visually-hidden">' .  $this->t('Clear filter') . ' </span></a></li>';
-        }
+      if ($exposed_count == 1 && count($items) == 1) {
+        $items[0]['url'] = strtok($items[0]['url'], '?');
       }
 
-      // End the list and wrapper.
-      $markup .= '</ul>';
-      $markup .= '</div>';
-
-      // Return markup.
+      // Render.
       if ($build_count > 0) {
         return [
-          '#markup' => $markup,
+          '#theme' => 'views_x_posed_filters',
+          '#label_element' => $this->options['label_element'],
+          '#label_classes' => $this->options['label_classes'] ,
+          '#label' => $this->options['label'],
+          '#items' => $items,
         ];
       }
     }
@@ -248,6 +238,7 @@ class ViewsXPosedFilters extends AreaPluginBase {
     $this->exposedNames = [];
     $this->exposedTypes = [];
 
+    // Go through exposed filters.
     foreach ($this->view->filter as $field => $filter) {
       if ($filter->isExposed()) {
         $field_name = $filter->exposedInfo()['value'];
@@ -262,6 +253,16 @@ class ViewsXPosedFilters extends AreaPluginBase {
         unset($this->exposedInput[$key]);
       }
     }
+
+    // Go through contextual filters that are query parameters.
+    foreach ($this->view->argument as $field => $filter) {
+      if ($filter->options['default_argument_type'] == 'query_parameter') {
+        $field_name = $filter->options['default_argument_options']['query_param'];
+        $this->exposedNames[$field_name] = $field;
+        $this->exposedTypes[$field_name] = get_class($filter);
+      }
+    }
+
   }
 
 }

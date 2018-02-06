@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ * Show xposed filters.
+ *
+ * Variables:
+ * - label_element: h3, div, span, etc of the label.
+ * - label_classes: class="..." of the label element.
+ * - label: Text of the label.
+ * - items: An array of filters.
+ *   - url: The path to the view without this filter.
+ *   - text: The text to show.
+ *
+ * @see template_preprocess_views_exposed_filters()
+ */
+ #}
+<div class="xposed-items-wrapper">
+  <{{ label_element }}
+  {% if label_classes %}
+    class="{{ label_classes }}"
+  {% endif %}
+  >
+    {{ label }}
+  </{{ label_element }}>
+  <ul class="xposed-filters">
+    {% for item in items %}
+      <li class="filter-wrapper"><a href="{{ item.url }}" class="filter-cancel"><span class="filter-name">{{ item.text }}</span><span class="visually-hidden">{{ 'Clear filter'|trans }}</span></a></li>
+    {% endfor %}
+  </ul>
+</div>

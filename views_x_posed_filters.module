@@ -23,4 +23,18 @@ function views_x_posed_filters_help($route_name, RouteMatchInterface $route_matc
   }
 }
 
-
+/**
+ * Implements hook_theme().
+ */
+function views_x_posed_filters_theme($existing, $type, $theme, $path) {
+  return [
+    'views_x_posed_filters' => [
+      'variables' => [
+        'label_element' => NULL,
+        'label_classes' => NULL,
+        'label' => NULL,
+        'items' => NULL,
+      ],
+    ],
+  ];
+}
