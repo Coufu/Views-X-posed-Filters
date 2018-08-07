@@ -1,0 +1,6 @@
+main:
+  version: 1.x
+  js:
+    js/views-x-posed-filters.min.js: {}
+  dependencies:
+    - core/jquery

@@ -24,7 +24,12 @@
   </{{ label_element }}>
   <ul class="xposed-filters">
     {% for item in items %}
-      <li class="filter-wrapper"><a href="{{ item.url }}" class="filter-cancel"><span class="filter-name">{{ item.text }}</span><span class="visually-hidden">{{ 'Clear filter'|trans }}</span></a></li>
+      <li class="filter-wrapper">
+        <a href="?{{ item.qstring }}" class="filter-cancel" data-filter="{{ item.filter }}">
+          <span class="filter-name">{{ item.text }}</span>
+          <span class="visually-hidden">{{ 'Clear filter'|trans }}</span>
+        </a>
+      </li>
     {% endfor %}
   </ul>
 </div>

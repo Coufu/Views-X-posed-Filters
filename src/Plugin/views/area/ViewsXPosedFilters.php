@@ -24,6 +24,7 @@ class ViewsXPosedFilters extends AreaPluginBase {
   private $exposedInput;
   private $exposedNames;
   private $exposedTypes;
+  private $numValidExposedInput;
 
   /**
    * {@inheritdoc}
@@ -178,31 +179,17 @@ class ViewsXPosedFilters extends AreaPluginBase {
             break;
         }
 
-        // Rebuild URI starting with the bare path (without query string).
-        $link_url = '/' . $this->view->getPath();
-
-        // Parse the query string.
-        parse_str($_SERVER['QUERY_STRING'], $qarray);
-
         // Only append a new query string if there's more than 1 item.
-        if (count($qarray) > 1) {
-          $link_url .= '?';
-
-          // Unset this filter in its own link.
-          $qkeys = array_keys($qarray);
-          if (($key = array_search($exposed_name, $qkeys)) !== FALSE) {
-            unset($qarray[$qkeys[$key]]);
-            array_values($qarray);
-          }
-
+        if ($this->getNumValidExposedInput() > 1) {
           // Append the query string to the link.
-          $link_url .= http_build_query($qarray);
+          $qstring = $this->getQueryStringWithout($exposed_name);
         }
 
         // Finally, add to items array.
         $items[] = [
-          'url' => $link_url,
+          'qstring' => $qstring,
           'text' => $link_text,
+          'filter' => $exposed_name,
         ];
 
         $build_count++;
@@ -221,6 +208,11 @@ class ViewsXPosedFilters extends AreaPluginBase {
           '#label_classes' => $this->options['label_classes'] ,
           '#label' => $this->options['label'],
           '#items' => $items,
+          '#attached' => [
+            'library' => [
+              'views_x_posed_filters/main',
+            ],
+          ],
         ];
       }
     }
@@ -234,7 +226,7 @@ class ViewsXPosedFilters extends AreaPluginBase {
    */
   private function buildExposedData() {
     // Set variables.
-    $this->exposedInput = $this->view->getExposedInput();
+    $this->exposedInput = $this->view->exposed_raw_input;
     $this->exposedNames = [];
     $this->exposedTypes = [];
 
@@ -262,7 +254,45 @@ class ViewsXPosedFilters extends AreaPluginBase {
         $this->exposedTypes[$field_name] = get_class($filter);
       }
     }
+  }
 
+  /**
+   * Get actual number of exposed input.
+   *
+   * @return int
+   *   Number of exposed input.
+   */
+  private function getNumValidExposedInput() {
+    if (empty($this->numValidExposedInput)) {
+      $this->numValidExposedInput = 0;
+      foreach ($this->exposedInput as $name => $value) {
+        if (!empty($this->exposedTypes[$name])) {
+          $this->numValidExposedInput++;
+        }
+      }
+    }
+    return $this->numValidExposedInput;
+  }
+
+  /**
+   * Get the views query string filters excluding a filter.
+   *
+   * @param string $exposed_name
+   *   Exposed filter to exclude.
+   *
+   * @return string
+   *   New query string.
+   */
+  private function getQueryStringWithout($exposed_name) {
+    $result = [];
+    foreach ($this->exposedInput as $key => $val) {
+      if ($key != $exposed_name && !empty($this->exposedInput[$key]) && !empty($val)) {
+        $result[$key] = $val;
+      }
+    }
+
+    // Append the query string to the link.
+    return http_build_query($result);
   }
 
 }
